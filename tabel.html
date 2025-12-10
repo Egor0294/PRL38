@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Табель рабочего времени</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        h3 {
+            margin: 15px 0 10px 0;
+            color: #34495e;
+        }
+        
+        .datetime {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 12px 30px;
+            background-color: #f8f9fa;
+            border: none;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background-color: #e9ecef;
+        }
+        
+        .tab.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .password-section {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .password-input {
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-warning {
+            background-color: #f39c12;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d35400;
+        }
+        
+        .employee-select-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-select, .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+        
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .work-form {
+            max-width: 500px;
+            margin: 30px auto;
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .employee-info {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .employee-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .employee-position {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .work-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .status-label {
+            margin-right: 15px;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+        
+        .hours-input, .lessons-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            animation: fadeInOut 3s;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+            margin-top: 20px;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .summary-table th, .summary-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .summary-table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        
+        .summary-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: #e8f4fc !important;
+        }
+        
+        .employee-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .employee-card.trainer {
+            border-left-color: #2ecc71;
+        }
+        
+        .employee-card.admin {
+            border-left-color: #9b59b6;
+        }
+        
+        .employee-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .add-employee-form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px dashed #3498db;
+        }
+        
+        .position-select {
+            padding: 12px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                margin-right: 0;
+                margin-bottom: 5px;
+                border-radius: 5px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            .employee-select-form, .work-form {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Табель рабочего времени</h1>
+            <div class="datetime" id="datetime">Загрузка даты и времени...</div>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="employee">Для сотрудников</button>
+            <button class="tab" data-tab="owner">Для владельца</button>
+            <button class="tab" data-tab="management">Управление сотрудниками</button>
+        </div>
+        
+        <!-- Вкладка для сотрудников (упрощенная) -->
+        <div id="employee-tab" class="tab-content active">
+            <h2>Отметка рабочего времени</h2>
+            <p>Выберите себя из списка и отметьте отработанное время</p>
+            
+            <!-- Форма выбора сотрудника (всегда видна) -->
+            <div class="employee-select-form" id="employee-select-form">
+                <div class="form-group">
+                    <label class="form-label">Выберите сотрудника:</label>
+                    <select id="employee-select" class="form-select">
+                        <option value="">-- Выберите сотрудника --</option>
+                        <!-- Сотрудники будут добавлены динамически -->
+                    </select>
+                </div>
+                <button id="select-employee-btn" class="btn btn-success">Выбрать</button>
+            </div>
+            
+            <!-- Форма отметки рабочего времени (скрыта до выбора) -->
+            <div class="work-form hidden" id="work-form">
+                <div class="employee-info">
+                    <div class="employee-name" id="selected-employee-name"></div>
+                    <div class="employee-position" id="selected-employee-position"></div>
+                </div>
+                
+                <div class="work-status">
+                    <span class="status-label">Отработал день:</span>
+                    <input type="checkbox" id="worked-checkbox" class="checkbox">
+                </div>
+                
+                <div id="trainer-section" class="hidden">
+                    <label for="lessons-input">Количество проведенных занятий:</label>
+                    <input type="number" id="lessons-input" class="lessons-input" min="0" value="0">
+                </div>
+                
+                <div id="admin-section" class="hidden">
+                    <label for="hours-input">Отработанных часов (почасовая ставка):</label>
+                    <input type="number" id="hours-input" class="hours-input" min="0" step="0.5" value="8">
+                </div>
+                
+                <div style="margin-top: 25px;">
+                    <button id="save-work-btn" class="btn btn-success">Сохранить данные</button>
+                    <button id="change-employee-btn" class="btn">Выбрать другого сотрудника</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка для владельца (запаролена) -->
+        <div id="owner-tab" class="tab-content">
+            <div id="password-section" class="password-section">
+                <h2>Доступ только для владельца</h2>
+                <p>Введите пароль для просмотра сводных данных</p>
+                <input type="password" id="password-input" class="password-input" placeholder="Введите пароль">
+                <button id="login-btn" class="btn">Войти</button>
+            </div>
+            
+            <div id="owner-content" class="hidden">
+                <h2>Сводные данные по сотрудникам</h2>
+                <p>Данные обновляются в реальном времени</p>
+                
+                <div id="summary-data">
+                    <!-- Сводная таблица будет загружена динамически -->
+                </div>
+                
+                <button id="logout-btn" class="btn logout-btn">Выйти</button>
+            </div>
+        </div>
+        
+        <!-- Вкладка управления сотрудниками (запаролена) -->
+        <div id="management-tab" class="tab-content">
+            <div id="management-password-section" class="password-section">
+                <h2>Управление сотрудниками</h2>
+                <p>Доступ только для администратора</p>
+                <input type="password" id="management-password-input" class="password-input" placeholder="Введите пароль администратора">
+                <button id="management-login-btn" class="btn">Войти</button>
+            </div>
+            
+            <div id="management-content" class="hidden">
+                <h2>Управление базой сотрудников</h2>
+                
+                <div class="add-employee-form">
+                    <h3>Добавить нового сотрудника</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ФИО сотрудника:</label>
+                        <input type="text" id="new-employee-name" class="form-input" placeholder="Иванов Иван Иванович">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Должность:</label>
+                        <select id="new-employee-position" class="position-select">
+                            <option value="тренер">Тренер</option>
+                            <option value="администратор">Администратор</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" id="rate-label">Ставка за занятие (руб.):</label>
+                        <input type="number" id="new-employee-rate" class="form-input" min="0" value="500">
+                    </div>
+                    
+                    <button id="add-employee-btn" class="btn btn-success">Добавить сотрудника</button>
+                </div>
+                
+                <h3>Список всех сотрудников</h3>
+                <p>Всего сотрудников: <span id="total-employees">0</span></p>
+                
+                <div id="management-employee-list">
+                    <!-- Список сотрудников для управления будет загружен динамически -->
+                </div>
+                
+                <div class="management-actions" style="margin-top: 30px;">
+                    <button id="export-data-btn" class="btn btn-warning">Экспорт данных</button>
+                    <button id="import-data-btn" class="btn" onclick="document.getElementById('import-file-input').click()">Импорт данных</button>
+                    <button id="management-logout-btn" class="btn logout-btn">Выйти</button>
+                </div>
+                
+                <input type="file" id="import-file-input" class="hidden" accept=".json">
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // База данных сотрудников
+        let employees = [
+            { id: 1, name: "Иванов Иван Иванович", position: "тренер", rate: 500, worked: false, lessons: 0, hours: 0 },
+            { id: 2, name: "Петров Петр Петрович", position: "тренер", rate: 450, worked: false, lessons: 0, hours: 0 },
+            { id: 3, name: "Сидорова Анна Сергеевна", position: "администратор", rate: 300, worked: false, lessons: 0, hours: 0 },
+            { id: 4, name: "Кузнецова Мария Владимировна", position: "администратор", rate: 320, worked: false, lessons: 0, hours: 0 },
+            { id: 5, name: "Смирнов Алексей Дмитриевич", position: "тренер", rate: 480, worked: false, lessons: 0, hours: 0 }
+        ];
+        
+        // Пароль для доступа владельца
+        const OWNER_PASSWORD = "admin123";
+        // Пароль для управления сотрудниками
+        const MANAGEMENT_PASSWORD = "manage123";
+        
+        // Обновление даты и времени в реальном времени
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('datetime').textContent = now.toLocaleDateString('ru-RU', options);
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обновляем дату и время каждую секунду
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Загружаем список сотрудников в выпадающий список
+            loadEmployeeSelect();
+            
+            // Настройка вкладок
+            setupTabs();
+            
+            // Настройка кнопки выбора сотрудника
+            document.getElementById('select-employee-btn').addEventListener('click', selectEmployeeFromDropdown);
+            
+            // Настройка кнопки сохранения данных
+            document.getElementById('save-work-btn').addEventListener('click', saveWorkData);
+            
+            // Настройка кнопки смены сотрудника
+            document.getElementById('change-employee-btn').addEventListener('click', function() {
+                document.getElementById('work-form').classList.add('hidden');
+                document.getElementById('employee-select-form').classList.remove('hidden');
+                document.getElementById('employee-select').value = '';
+            });
+            
+            // Настройка входа для владельца
+            document.getElementById('login-btn').addEventListener('click', checkOwnerPassword);
+            document.getElementById('password-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkOwnerPassword();
+                }
+            });
+            
+            // Настройка выхода для владельца
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                document.getElementById('owner-content').classList.add('hidden');
+                document.getElementById('password-section').classList.remove('hidden');
+                document.getElementById('password-input').value = '';
+            });
+            
+            // Настройка входа для управления сотрудниками
+            document.getElementById('management-login-btn').addEventListener('click', checkManagementPassword);
+            document.getElementById('management-password-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkManagementPassword();
+                }
+            });
+            
+            // Настройка выхода для управления сотрудниками
+            document.getElementById('management-logout-btn').addEventListener('click', function() {
+                document.getElementById('management-content').classList.add('hidden');
+                document.getElementById('management-password-section').classList.remove('hidden');
+                document.getElementById('management-password-input').value = '';
+            });
+            
+            // Настройка добавления сотрудника
+            document.getElementById('add-employee-btn').addEventListener('click', addNewEmployee);
+            
+            // Настройка изменения типа ставки при выборе должности
+            document.getElementById('new-employee-position').addEventListener('change', function() {
+                updateRateLabel();
+            });
+            
+            // Настройка экспорта данных
+            document.getElementById('export-data-btn').addEventListener('click', exportEmployeesData);
+            
+            // Настройка импорта данных
+            document.getElementById('import-file-input').addEventListener('change', importEmployeesData);
+            
+            // Загрузка данных из localStorage при запуске
+            loadFromLocalStorage();
+            
+            // Инициализация метки ставки
+            updateRateLabel();
+        });
+        
+        // Загрузка сотрудников в выпадающий список
+        function loadEmployeeSelect() {
+            const employeeSelect = document.getElementById('employee-select');
+            
+            // Очищаем все опции кроме первой
+            while (employeeSelect.options.length > 1) {
+                employeeSelect.remove(1);
+            }
+            
+            // Добавляем сотрудников в выпадающий список
+            employees.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.id;
+                option.textContent = `${employee.name} (${employee.position === 'тренер' ? 'Тренер' : 'Администратор'})`;
+                employeeSelect.appendChild(option);
+            });
+        }
+        
+        // Обновление метки ставки в зависимости от должности
+        function updateRateLabel() {
+            const position = document.getElementById('new-employee-position').value;
+            const label = document.getElementById('rate-label');
+            
+            if (position === 'тренер') {
+                label.textContent = 'Ставка за занятие (руб.):';
+            } else {
+                label.textContent = 'Почасовая ставка (руб.):';
+            }
+        }
+        
+        // Выбор сотрудника из выпадающего списка
+        function selectEmployeeFromDropdown() {
+            const selectedId = document.getElementById('employee-select').value;
+            
+            if (!selectedId) {
+                showNotification('Выберите сотрудника из списка!', 'error');
+                return;
+            }
+            
+            const employee = employees.find(emp => emp.id === parseInt(selectedId));
+            if (!employee) return;
+            
+            // Показываем информацию о выбранном сотруднике
+            document.getElementById('selected-employee-name').textContent = employee.name;
+            document.getElementById('selected-employee-position').textContent = 
+                employee.position === 'тренер' ? 'Тренер' : 'Администратор';
+            
+            document.getElementById('worked-checkbox').checked = employee.worked;
+            
+            // Показываем соответствующие поля в зависимости от должности
+            if (employee.position === 'тренер') {
+                document.getElementById('trainer-section').classList.remove('hidden');
+                document.getElementById('admin-section').classList.add('hidden');
+                document.getElementById('lessons-input').value = employee.lessons;
+            } else {
+                document.getElementById('trainer-section').classList.add('hidden');
+                document.getElementById('admin-section').classList.remove('hidden');
+                document.getElementById('hours-input').value = employee.hours;
+            }
+            
+            // Показываем форму отметки и скрываем форму выбора
+            document.getElementById('employee-select-form').classList.add('hidden');
+            document.getElementById('work-form').classList.remove('hidden');
+            
+            // Сохраняем выбранного сотрудника
+            localStorage.setItem('selectedEmployeeId', selectedId);
+        }
+        
+        // Сохранение данных о работе
+        function saveWorkData() {
+            const selectedEmployeeId = localStorage.getItem('selectedEmployeeId');
+            if (!selectedEmployeeId) {
+                showNotification('Сначала выберите сотрудника!', 'error');
+                return;
+            }
+            
+            const employee = employees.find(emp => emp.id === parseInt(selectedEmployeeId));
+            if (!employee) return;
+            
+            // Обновляем данные сотрудника
+            employee.worked = document.getElementById('worked-checkbox').checked;
+            
+            if (employee.position === 'тренер') {
+                employee.lessons = parseInt(document.getElementById('lessons-input').value) || 0;
+                employee.hours = 0; // Для тренеров часы не считаем
+            } else {
+                employee.lessons = 0; // Для администраторов занятия не считаем
+                employee.hours = parseFloat(document.getElementById('hours-input').value) || 0;
+            }
+            
+            // Сохраняем в localStorage
+            saveToLocalStorage();
+            
+            // Показываем уведомление и возвращаем к выбору сотрудника
+            showNotification('Данные успешно сохранены!', 'success');
+            
+            // Возвращаем к выбору сотрудника
+            setTimeout(() => {
+                document.getElementById('work-form').classList.add('hidden');
+                document.getElementById('employee-select-form').classList.remove('hidden');
+                document.getElementById('employee-select').value = '';
+                localStorage.removeItem('selectedEmployeeId');
+            }, 1500);
+        }
+        
+        // Настройка вкладок
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Убираем активный класс у всех вкладок
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Добавляем активный класс к выбранной вкладке
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Если выбрана вкладка владельца, сбрасываем пароль
+                    if (tabId === 'owner') {
+                        document.getElementById('owner-content').classList.add('hidden');
+                        document.getElementById('password-section').classList.remove('hidden');
+                        document.getElementById('password-input').value = '';
+                    }
+                    
+                    // Если выбрана вкладка управления, сбрасываем пароль
+                    if (tabId === 'management') {
+                        document.getElementById('management-content').classList.add('hidden');
+                        document.getElementById('management-password-section').classList.remove('hidden');
+                        document.getElementById('management-password-input').value = '';
+                    }
+                    
+                    // Если выбрана вкладка сотрудников, сбрасываем выбор сотрудника
+                    if (tabId === 'employee') {
+                        document.getElementById('work-form').classList.add('hidden');
+                        document.getElementById('employee-select-form').classList.remove('hidden');
+                        document.getElementById('employee-select').value = '';
+                        localStorage.removeItem('selectedEmployeeId');
+                    }
+                });
+            });
+        }
+        
+        // Проверка пароля владельца
+        function checkOwnerPassword() {
+            const password = document.getElementById('password-input').value;
+            
+            if (password === OWNER_PASSWORD) {
+                document.getElementById('password-section').classList.add('hidden');
+                document.getElementById('owner-content').classList.remove('hidden');
+                loadOwnerSummary();
+            } else {
+                showNotification('Неверный пароль!', 'error');
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-input').focus();
+            }
+        }
+        
+        // Проверка пароля для управления сотрудниками
+        function checkManagementPassword() {
+            const password = document.getElementById('management-password-input').value;
+            
+            if (password === MANAGEMENT_PASSWORD) {
+                document.getElementById('management-password-section').classList.add('hidden');
+                document.getElementById('management-content').classList.remove('hidden');
+                loadManagementEmployeeList();
+            } else {
+                showNotification('Неверный пароль!', 'error');
+                document.getElementById('management-password-input').value = '';
+                document.getElementById('management-password-input').focus();
+            }
+        }
+        
+        // Загрузка списка сотрудников для управления
+        function loadManagementEmployeeList() {
+            const employeeList = document.getElementById('management-employee-list');
+            employeeList.innerHTML = '';
+            
+            if (employees.length === 0) {
+                employeeList.innerHTML = '<p>Нет сотрудников в базе данных.</p>';
+                updateEmployeeCount();
+                return;
+            }
+            
+            employees.forEach(employee => {
+                const employeeCard = document.createElement('div');
+                employeeCard.className = `employee-card ${employee.position}`;
+                employeeCard.innerHTML = `
+                    <button class="delete-btn" data-id="${employee.id}" title="Удалить сотрудника">×</button>
+                    <div class="employee-name">${employee.name}</div>
+                    <div class="employee-position">${employee.position === 'тренер' ? 'Тренер' : 'Администратор'}</div>
+                    <div style="margin-top: 10px; color: #2c3e50; font-weight: 500;">
+                        Ставка: ${employee.rate} руб./${employee.position === 'тренер' ? 'занятие' : 'час'}
+                    </div>
+                    <div style="margin-top: 5px; font-size: 14px; color: ${employee.worked ? '#27ae60' : '#e74c3c'}">
+                        ${employee.worked ? '✅ Отработал сегодня' : '❌ Не отметился сегодня'}
+                        ${employee.position === 'тренер' ? ` (${employee.lessons} занятий)` : ` (${employee.hours} часов)`}
+                    </div>
+                    <div class="employee-actions">
+                        <button class="btn btn-warning edit-employee-btn" data-id="${employee.id}">Редактировать</button>
+                    </div>
+                `;
+                
+                employeeList.appendChild(employeeCard);
+            });
+            
+            // Настройка кнопок удаления сотрудников
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const employeeId = parseInt(this.getAttribute('data-id'));
+                    deleteEmployee(employeeId);
+                });
+            });
+            
+            // Настройка кнопок редактирования сотрудников
+            document.querySelectorAll('.edit-employee-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const employeeId = parseInt(this.getAttribute('data-id'));
+                    editEmployee(employeeId);
+                });
+            });
+            
+            // Обновляем количество сотрудников
+            updateEmployeeCount();
+        }
+        
+        // Обновление счетчика сотрудников
+        function updateEmployeeCount() {
+            document.getElementById('total-employees').textContent = employees.length;
+        }
+        
+        // Добавление нового сотрудника
+        function addNewEmployee() {
+            const name = document.getElementById('new-employee-name').value.trim();
+            const position = document.getElementById('new-employee-position').value;
+            const rate = parseFloat(document.getElementById('new-employee-rate').value);
+            
+            // Проверка введенных данных
+            if (!name) {
+                showNotification('Введите ФИО сотрудника!', 'error');
+                return;
+            }
+            
+            if (isNaN(rate) || rate <= 0) {
+                showNotification('Введите корректную ставку!', 'error');
+                return;
+            }
+            
+            // Проверка, существует ли уже сотрудник с таким именем
+            const existingEmployee = employees.find(emp => emp.name.toLowerCase() === name.toLowerCase());
+            if (existingEmployee) {
+                showNotification('Сотрудник с таким именем уже существует!', 'error');
+                return;
+            }
+            
+            // Создаем нового сотрудника
+            const newId = employees.length > 0 ? Math.max(...employees.map(emp => emp.id)) + 1 : 1;
+            const newEmployee = {
+                id: newId,
+                name: name,
+                position: position,
+                rate: rate,
+                worked: false,
+                lessons: 0,
+                hours: 0
+            };
+            
+            employees.push(newEmployee);
+            
+            // Сохраняем в localStorage
+            saveToLocalStorage();
+            
+            // Обновляем выпадающий список сотрудников
+            loadEmployeeSelect();
+            
+            // Обновляем список сотрудников для управления
+            loadManagementEmployeeList();
+            
+            // Очищаем форму
+            document.getElementById('new-employee-name').value = '';
+            document.getElementById('new-employee-rate').value = position === 'тренер' ? '500' : '300';
+            
+            showNotification(`Сотрудник "${name}" успешно добавлен!`, 'success');
+        }
+        
+        // Удаление сотрудника
+        function deleteEmployee(id) {
+            const employee = employees.find(emp => emp.id === id);
+            if (!employee) return;
+            
+            // Подтверждение удаления
+            if (!confirm(`Вы уверены, что хотите удалить сотрудника "${employee.name}"?`)) {
+                return;
+            }
+            
+            // Удаляем сотрудника
+            employees = employees.filter(emp => emp.id !== id);
+            
+            // Сохраняем в localStorage
+            saveToLocalStorage();
+            
+            // Обновляем выпадающий список сотрудников
+            loadEmployeeSelect();
+            
+            // Обновляем список сотрудников для управления
+            loadManagementEmployeeList();
+            
+            // Если удален выбранный сотрудник, скрываем форму
+            const selectedEmployeeId = localStorage.getItem('selectedEmployeeId');
+            if (selectedEmployeeId && parseInt(selectedEmployeeId) === id) {
+                document.getElementById('work-form').classList.add('hidden');
+                document.getElementById('employee-select-form').classList.remove('hidden');
+                localStorage.removeItem('selectedEmployeeId');
+            }
+            
+            showNotification(`Сотрудник "${employee.name}" удален!`, 'success');
+        }
+        
+        // Редактирование сотрудника
+        function editEmployee(id) {
+            const employee = employees.find(emp => emp.id === id);
+            if (!employee) return;
+            
+            // Запрашиваем новые данные
+            const newName = prompt('Введите новое ФИО сотрудника:', employee.name);
+            if (!newName) return;
+            
+            const newPosition = prompt('Введите новую должность (тренер/администратор):', employee.position);
+            if (!newPosition || (newPosition !== 'тренер' && newPosition !== 'администратор')) {
+                showNotification('Должность должна быть "тренер" или "администратор"!', 'error');
+                return;
+            }
+            
+            const newRate = parseFloat(prompt('Введите новую ставку:', employee.rate));
+            if (isNaN(newRate) || newRate <= 0) {
+                showNotification('Введите корректную ставку!', 'error');
+                return;
+            }
+            
+            // Обновляем данные сотрудника
+            employee.name = newName.trim();
+            employee.position = newPosition;
+            employee.rate = newRate;
+            
+            // Сбрасываем данные за сегодня при смене должности
+            if (employee.position !== newPosition) {
+                employee.worked = false;
+                employee.lessons = 0;
+                employee.hours = 0;
+            }
+            
+            // Сохраняем в localStorage
+            saveToLocalStorage();
+            
+            // Обновляем выпадающий список сотрудников
+            loadEmployeeSelect();
+            
+            // Обновляем список сотрудников для управления
+            loadManagementEmployeeList();
+            
+            showNotification(`Данные сотрудника "${employee.name}" обновлены!`, 'success');
+        }
+        
+        // Экспорт данных сотрудников
+        function exportEmployeesData() {
+            const data = {
+                employees: employees,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `employees_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Данные успешно экспортированы!', 'success');
+        }
+        
+        // Импорт данных сотрудников
+        function importEmployeesData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (!importedData.employees || !Array.isArray(importedData.employees)) {
+                        throw new Error('Неверный формат файла');
+                    }
+                    
+                    // Подтверждение импорта
+                    if (!confirm(`Вы уверены, что хотите импортировать ${importedData.employees.length} сотрудников? Текущие данные будут заменены.`)) {
+                        document.getElementById('import-file-input').value = '';
+                        return;
+                    }
+                    
+                    // Обновляем список сотрудников
+                    employees = importedData.employees;
+                    
+                    // Обновляем ID сотрудников, чтобы избежать дублирования
+                    let maxId = 0;
+                    employees.forEach(emp => {
+                        if (emp.id > maxId) maxId = emp.id;
+                    });
+                    
+                    // Сбрасываем данные за сегодня для всех сотрудников
+                    employees.forEach(emp => {
+                        emp.worked = false;
+                        emp.lessons = 0;
+                        emp.hours = 0;
+                    });
+                    
+                    // Сохраняем в localStorage
+                    saveToLocalStorage();
+                    
+                    // Обновляем выпадающий список сотрудников
+                    loadEmployeeSelect();
+                    
+                    // Обновляем список сотрудников для управления
+                    loadManagementEmployeeList();
+                    
+                    // Сбрасываем выбранного сотрудника
+                    document.getElementById('work-form').classList.add('hidden');
+                    document.getElementById('employee-select-form').classList.remove('hidden');
+                    localStorage.removeItem('selectedEmployeeId');
+                    
+                    document.getElementById('import-file-input').value = '';
+                    
+                    showNotification(`Данные успешно импортированы! Загружено ${employees.length} сотрудников.`, 'success');
+                } catch (error) {
+                    showNotification('Ошибка при импорте файла: ' + error.message, 'error');
+                    document.getElementById('import-file-input').value = '';
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Загрузка сводных данных для владельца
+        function loadOwnerSummary() {
+            const summaryData = document.getElementById('summary-data');
+            
+            // Фильтруем сотрудников, которые отметились
+            const workedEmployees = employees.filter(emp => emp.worked);
+            
+            if (workedEmployees.length === 0) {
+                summaryData.innerHTML = '<p>На сегодня еще никто не отметился.</p>';
+                return;
+            }
+            
+            // Создаем таблицу
+            let tableHTML = `
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Должность</th>
+                            <th>Ставка (руб.)</th>
+                            <th>Отработал</th>
+                            <th>Занятия/Часы</th>
+                            <th>Сумма (руб.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            let totalAmount = 0;
+            
+            workedEmployees.forEach(employee => {
+                let workDetails = '';
+                let amount = 0;
+                
+                if (employee.position === 'тренер') {
+                    workDetails = `${employee.lessons} занятий`;
+                    amount = employee.lessons * employee.rate;
+                } else {
+                    workDetails = `${employee.hours} часов`;
+                    amount = employee.hours * employee.rate;
+                }
+                
+                totalAmount += amount;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${employee.name}</td>
+                        <td>${employee.position === 'тренер' ? 'Тренер' : 'Администратор'}</td>
+                        <td>${employee.rate}</td>
+                        <td>✅</td>
+                        <td>${workDetails}</td>
+                        <td>${amount.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    <tr class="total-row">
+                        <td colspan="5" style="text-align: right;">Общая сумма:</td>
+                        <td>${totalAmount.toFixed(2)} руб.</td>
+                    </tr>
+                </tbody>
+                </table>
+            `;
+            
+            summaryData.innerHTML = tableHTML;
+        }
+        
+        // Показ уведомлений
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.backgroundColor = type === 'error' ? '#e74c3c' : '#2ecc71';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Сохранение данных в localStorage
+        function saveToLocalStorage() {
+            const today = new Date().toDateString();
+            const data = {
+                date: today,
+                employees: employees
+            };
+            localStorage.setItem('workTimeData', JSON.stringify(data));
+        }
+        
+        // Загрузка данных из localStorage
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('workTimeData');
+            if (!savedData) return;
+            
+            const data = JSON.parse(savedData);
+            const today = new Date().toDateString();
+            
+            // Загружаем данные только если они за сегодня
+            if (data.date === today) {
+                // Обновляем данные сотрудников
+                data.employees.forEach(savedEmployee => {
+                    const employee = employees.find(emp => emp.id === savedEmployee.id);
+                    if (employee) {
+                        employee.worked = savedEmployee.worked;
+                        employee.lessons = savedEmployee.lessons;
+                        employee.hours = savedEmployee.hours;
+                    }
+                });
+                
+                // Обновляем выпадающий список сотрудников
+                loadEmployeeSelect();
+            } else {
+                // Если данные за другой день, очищаем их
+                employees.forEach(emp => {
+                    emp.worked = false;
+                    emp.lessons = 0;
+                    emp.hours = 0;
+                });
+                localStorage.removeItem('selectedEmployeeId');
+                loadEmployeeSelect();
+            }
+        }
+    </script>
+</body>
+</html>
